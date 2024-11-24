@@ -3,9 +3,12 @@ import type { Config } from 'tailwindcss'
 const config: Config = {
     darkMode: ['class'],
     content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+		'./src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+		'./src/components/**/*.{js,ts,jsx,tsx,mdx}',
+		'./src/app/**/*.{js,ts,jsx,tsx,mdx}',
+		'./src/shared/**/*.{js,ts,jsx,tsx,mdx}',  // 이 줄을 추가
+		'./src/features/**/*.{js,ts,jsx,tsx,mdx}', // features도 추가하면 좋습니다
+		'./src/widgets/**/*.{js,ts,jsx,tsx,mdx}',  // widgets도 추가하면 좋습니다
   ],
   theme: {
   	extend: {

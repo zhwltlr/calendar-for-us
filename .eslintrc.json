@@ -1,3 +1,43 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    // FSD 레이어 간 import 규칙
+    "import/no-internal-modules": [
+      "error",
+      {
+        "allow": [
+          "@/app/**",
+          "@/pages/**",
+          "@/widgets/**",
+          "@/features/**",
+          "@/entities/**",
+          "@/shared/**"
+        ]
+      }
+    ],
+    // 레이어 간 의존성 규칙
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          // widgets는 pages와 features만 import 가능
+          "@/widgets/**/entities/**",
+          "@/widgets/**/shared/**",
+          
+          // features는 entities와 shared만 import 가능
+          "@/features/**/widgets/**",
+          "@/features/**/pages/**",
+          
+          // entities는 shared만 import 가능
+          "@/entities/**/features/**",
+          "@/entities/**/widgets/**",
+          "@/entities/**/pages/**"
+        ]
+      }
+    ]
+  }
 }

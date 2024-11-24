@@ -1,6 +1,7 @@
 import { format, getDay, parse, startOfWeek } from "date-fns";
 import { ko } from "date-fns/locale";
 import { dateFnsLocalizer } from "react-big-calendar";
+import { CalendarEvent } from "./types";
 
 export const locales = {
   ko: ko,
@@ -28,7 +29,7 @@ export const calendarMessages = {
   noEventsInRange: "일정이 없습니다",
 };
 
-export const eventStyleGetter = (event: { isHoliday: boolean }) => ({
+export const eventStyleGetter = (event: CalendarEvent) => ({
   style: {
     backgroundColor: event.isHoliday ? "#499e91" : "#3174ad",
     borderRadius: "4px",

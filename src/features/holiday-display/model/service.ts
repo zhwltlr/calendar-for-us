@@ -1,11 +1,11 @@
-import { HolidayEvent } from "@/widgets/calendar/model/types";
+import { CalendarEvent } from "@/widgets/calendar/model/types";
 import axios from "axios";
 import { HolidayItem, HolidayResponse } from "./types";
 
 export const fetchHolidayData = async (
   year: number,
   month: number
-): Promise<HolidayEvent[]> => {
+): Promise<CalendarEvent[]> => {
   const serviceKey = process.env.NEXT_PUBLIC_HOLIDAY_API_KEY
     ? decodeURIComponent(process.env.NEXT_PUBLIC_HOLIDAY_API_KEY)
     : "";
@@ -28,28 +28,30 @@ export const fetchHolidayData = async (
     );
 
     const items = response.data.response.body.items?.item || [];
-    return transformToHolidayEvents(items);
+    return transformToCalendarEvents(items);
   } catch (error) {
     console.error("Failed to fetch holidays:", error);
     return [];
   }
 };
 
-const transformToHolidayEvents = (
+const transformToCalendarEvents = (
   items: HolidayItem | HolidayItem[]
-): HolidayEvent[] => {
+): CalendarEvent[] => {
   const itemArray = Array.isArray(items) ? items : [items];
 
   return itemArray
     .filter((holiday) => holiday.isHoliday === "Y")
-    .map((holiday) => ({
-      title: holiday.dateName,
-      start: new Date(
+    .map((holiday) => {
+      const date = new Date(
         holiday.locdate.toString().replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
-      ),
-      end: new Date(
-        holiday.locdate.toString().replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
-      ),
-      isHoliday: true,
-    }));
+      );
+      return {
+        title: holiday.dateName,
+        start: date,
+        end: date,
+        isHoliday: true, // 필수 필드로 변경됨
+        description: `${holiday.dateName} (공휴일)`,
+      };
+    });
 };

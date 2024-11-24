@@ -9,18 +9,14 @@ import {
 } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
 import { Textarea } from "@/shared/ui/textarea";
+import { CalendarEvent } from "@/widgets/calendar/model/types";
 import { useState } from "react";
 
 interface ScheduleModalProps {
   isOpen: boolean;
   onClose: () => void;
   selectedDate: Date;
-  onSubmit: (data: {
-    title: string;
-    description: string;
-    startDate: Date;
-    endDate: Date;
-  }) => void;
+  onSubmit: (data: Omit<CalendarEvent, "id" | "isHoliday">) => void;
 }
 
 export const ScheduleModal = ({
@@ -37,8 +33,8 @@ export const ScheduleModal = ({
     onSubmit({
       title,
       description,
-      startDate: selectedDate,
-      endDate: selectedDate,
+      start: selectedDate,
+      end: selectedDate,
     });
     setTitle("");
     setDescription("");

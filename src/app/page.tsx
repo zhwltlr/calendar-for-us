@@ -1,9 +1,10 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
+import { HolidayCache, HolidayEvent } from "@/types/dateTypes";
+import axios from "axios";
 import { format, getDay, parse, startOfWeek } from "date-fns";
 import { ko } from "date-fns/locale";
-import { XMLParser } from "fast-xml-parser";
 import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
@@ -19,17 +20,6 @@ const localizer = dateFnsLocalizer({
   getDay,
   locales,
 });
-
-type HolidayEvent = {
-  title: string;
-  start: Date;
-  end: Date;
-  isHoliday: boolean;
-};
-
-type HolidayCache = {
-  [key: string]: HolidayEvent[];
-};
 
 const CustomCalendar = () => {
   const [myEvents, setMyEvents] = useState<HolidayEvent[]>([]);
@@ -54,13 +44,11 @@ const CustomCalendar = () => {
     async (date: Date) => {
       const cacheKey = getCacheKey(date);
 
-      // 이미 캐시에 있는 경우
       if (holidayCache.current[cacheKey]) {
         setHolidays(holidayCache.current[cacheKey]);
         return;
       }
 
-      // 이미 fetch 중인 경우 중복 요청 방지
       if (fetchingMonths.current.has(cacheKey)) {
         return;
       }
@@ -71,49 +59,46 @@ const CustomCalendar = () => {
 
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
-        const serviceKey = process.env.NEXT_PUBLIC_HOLIDAY_API_KEY;
-
-        const response = await fetch(
-          `http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo?solMonth=${month
-            .toString()
-            .padStart(
-              2,
-              "0"
-            )}&ServiceKey=${serviceKey}&solYear=${year}&numOfRows=100`
-        );
-
-        const xmlText = await response.text();
-        const parser = new XMLParser({
-          ignoreAttributes: false,
-          parseAttributeValue: true,
-        });
-
-        const result = parser.parse(xmlText);
-        const items = result.response.body.items?.item;
-
-        let holidayEvents: HolidayEvent[] = [];
-
-        if (items) {
-          const itemArray = Array.isArray(items) ? items : [items];
-          holidayEvents = itemArray
-            .filter((holiday) => holiday.isHoliday === "Y")
-            .map((holiday) => ({
-              title: holiday.dateName,
-              start: new Date(
-                holiday.locdate
-                  .toString()
-                  .replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
-              ),
-              end: new Date(
-                holiday.locdate
-                  .toString()
-                  .replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
-              ),
-              isHoliday: true,
-            }));
+        const serviceKey = process.env.NEXT_PUBLIC_HOLIDAY_API_KEY
+          ? decodeURIComponent(process.env.NEXT_PUBLIC_HOLIDAY_API_KEY)
+          : "";
+        if (!serviceKey) {
+          throw new Error("Holiday API key is not defined");
         }
 
-        // 캐시에 저장
+        const response = await axios.get(
+          `http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo`,
+          {
+            params: {
+              solMonth: month.toString().padStart(2, "0"),
+              ServiceKey: serviceKey,
+              solYear: year,
+              numOfRows: 100,
+            },
+          }
+        );
+
+        // JSON 응답 처리
+        const items = response.data.response.body.items?.item || [];
+        const holidayEvents: HolidayEvent[] = (
+          Array.isArray(items) ? items : [items]
+        )
+          .filter((holiday) => holiday.isHoliday === "Y")
+          .map((holiday) => ({
+            title: holiday.dateName,
+            start: new Date(
+              holiday.locdate
+                .toString()
+                .replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
+            ),
+            end: new Date(
+              holiday.locdate
+                .toString()
+                .replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
+            ),
+            isHoliday: true,
+          }));
+
         holidayCache.current[cacheKey] = holidayEvents;
         setHolidays(holidayEvents);
       } catch (error) {

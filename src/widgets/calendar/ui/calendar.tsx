@@ -13,6 +13,7 @@ import {
   eventStyleGetter,
 } from "../model/config";
 import { CalendarEvent, HolidayCache, Schedule } from "../model/types";
+import '../styles/calendar.css';
 
 const CALENDAR_HEIGHT = "calc(100vh - 200px)";
 
@@ -24,9 +25,20 @@ const MainCalendar: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
 
   const holidayCache = useRef<HolidayCache>({});
   const fetchingMonths = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const getCacheKey = useCallback((date: Date) => {
     return `${date.getFullYear()}-${(date.getMonth() + 1)
@@ -122,7 +134,10 @@ const MainCalendar: React.FC = () => {
 
   return (
     <Card className="p-4 w-full">
-      <div style={{ height: CALENDAR_HEIGHT }} className="w-full relative">
+      <div 
+        style={{ height: isMobile ? 'calc(100vh - 250px)' : CALENDAR_HEIGHT }} 
+        className="w-full relative"
+      >
         {isLoading && (
           <div className="absolute top-0 right-0 m-4 z-10">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />

@@ -1,4 +1,3 @@
-// src/features/holiday-display/model/service.ts
 import { CalendarEvent } from "@/widgets/calendar/model/types";
 import axios from "axios";
 import { HolidayItem, HolidayResponse } from "./types";

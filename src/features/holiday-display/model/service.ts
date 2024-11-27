@@ -1,3 +1,4 @@
+// src/features/holiday-display/model/service.ts
 import { CalendarEvent } from "@/widgets/calendar/model/types";
 import axios from "axios";
 import { HolidayItem, HolidayResponse } from "./types";
@@ -6,21 +7,12 @@ export const fetchHolidayData = async (
   year: number,
   month: number
 ): Promise<CalendarEvent[]> => {
-  const serviceKey = process.env.NEXT_PUBLIC_HOLIDAY_API_KEY
-    ? decodeURIComponent(process.env.NEXT_PUBLIC_HOLIDAY_API_KEY)
-    : "";
-
-  if (!serviceKey) {
-    throw new Error("Holiday API key is not defined");
-  }
-
   try {
     const response = await axios.get<HolidayResponse>(
-      `http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo`,
+      `/api/holidays`,
       {
         params: {
           solMonth: month.toString().padStart(2, "0"),
-          ServiceKey: serviceKey,
           solYear: year,
           numOfRows: 100,
         },
@@ -50,7 +42,7 @@ const transformToCalendarEvents = (
         title: holiday.dateName,
         start: date,
         end: date,
-        isHoliday: true, // 필수 필드로 변경됨
+        isHoliday: true,
         description: `${holiday.dateName} (공휴일)`,
       };
     });

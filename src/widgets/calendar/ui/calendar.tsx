@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { fetchHolidayData } from "@/features/holiday-display/model/service";
@@ -26,6 +27,8 @@ const MainCalendar: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [isMobile, setIsMobile] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | undefined>();
+  const [modalMode, setModalMode] = useState<'create' | 'view' | 'edit'>('create');
 
   const holidayCache = useRef<HolidayCache>({});
   const fetchingMonths = useRef<Set<string>>(new Set());
@@ -66,7 +69,18 @@ const MainCalendar: React.FC = () => {
 
   const handleSelectSlot = useCallback(({ start }: { start: Date }) => {
     setSelectedDate(start);
+    setSelectedEvent(undefined);
+    setModalMode('create');
     setIsModalOpen(true);
+  }, []);
+
+  const handleSelectEvent = useCallback((event: CalendarEvent) => {
+    if (!event.isHoliday) {
+      setSelectedEvent(event);
+      setSelectedDate(event.start);
+      setModalMode('view');
+      setIsModalOpen(true);
+    }
   }, []);
 
   const handleScheduleSubmit = async (
@@ -76,12 +90,38 @@ const MainCalendar: React.FC = () => {
       await axios.post("/api/schedules", {
         title: data.title,
         description: data.description,
-        startDate: data.start, // start를 startDate로 변환
-        endDate: data.end, // end를 endDate로 변환
+        startDate: data.start,
+        endDate: data.end,
       });
       fetchSchedules();
     } catch (error) {
       console.error("Failed to create schedule:", error);
+    }
+  };
+
+  const handleScheduleUpdate = async (
+    id: string,
+    data: Omit<CalendarEvent, "id" | "isHoliday">
+  ) => {
+    try {
+      await axios.put(`/api/schedules/${id}`, {
+        title: data.title,
+        description: data.description,
+        startDate: data.start.toISOString(), 
+        endDate: data.end.toISOString(),
+      });
+      fetchSchedules();
+    } catch (error) {
+      console.error("Failed to update schedule:", error);
+    }
+  };
+
+  const handleScheduleDelete = async (id: string) => {
+    try {
+      await axios.delete(`/api/schedules/${id}`);
+      fetchSchedules();
+    } catch (error) {
+      console.error("Failed to delete schedule:", error);
     }
   };
 
@@ -158,14 +198,19 @@ const MainCalendar: React.FC = () => {
           date={currentDate}
           onNavigate={setCurrentDate}
           onSelectSlot={handleSelectSlot}
+          onSelectEvent={handleSelectEvent}
           selectable
         />
       </div>
+
       <ScheduleModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         selectedDate={selectedDate}
+        selectedEvent={selectedEvent}
         onSubmit={handleScheduleSubmit}
+        onUpdate={handleScheduleUpdate}
+        onDelete={handleScheduleDelete}
       />
     </Card>
   );

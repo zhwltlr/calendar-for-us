@@ -1,3 +1,26 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          "@/widgets/**/entities/**",
+          "@/widgets/**/shared/**",
+          
+          "@/features/**/widgets/**",
+          "@/features/**/pages/**",
+          
+          "@/entities/**/features/**",
+          "@/entities/**/widgets/**",
+          "@/entities/**/pages/**"
+        ]
+      }
+    ]
+  }
 }

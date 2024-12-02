@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { fetchHolidayData } from "@/features/holiday-display/model/service";
@@ -18,7 +19,6 @@ import '../styles/calendar.css';
 const CALENDAR_HEIGHT = "calc(100vh - 200px)";
 
 const MainCalendar: React.FC = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [myEvents, setMyEvents] = useState<CalendarEvent[]>([]);
   const [holidays, setHolidays] = useState<CalendarEvent[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date());

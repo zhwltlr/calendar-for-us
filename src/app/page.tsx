@@ -1,15 +1,9 @@
-import Link from "next/link";
+import { LoginForm } from '@/features/auth/ui/login-form';
 
 const HomePage = () => {
   return (
-    <div className="container mx-auto py-6">
-      <h1 className="text-2xl font-bold mb-4">일정 관리 시스템</h1>
-      <Link
-        href="/calendar"
-        className="text-blue-500 hover:text-blue-700 underline"
-      >
-        캘린더 보기
-      </Link>
+    <div className="min-h-screen flex items-center justify-center">
+      <LoginForm />
     </div>
   );
 };

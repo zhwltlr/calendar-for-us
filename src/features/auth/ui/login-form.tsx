@@ -3,31 +3,43 @@
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
+import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface LoginFormData {
-  email: string;
+  id: string;
   password: string;
 }
 
 export const LoginForm = () => {
   const router = useRouter();
   const [formData, setFormData] = useState<LoginFormData>({
-    email: '',
+    id: '',
     password: '',
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      router.push('/calendar');
+      const result = await signIn('credentials', {
+        redirect: false,
+        id: formData.id,
+        password: formData.password,
+      });
+
+      if (result?.error) {
+        setError('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');
+      } else {
+        router.push('/calendar');
+      }
     } catch (error) {
-      console.error('Login failed:', error);
+      setError('로그인 중 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);
     }
@@ -40,16 +52,21 @@ export const LoginForm = () => {
           <h2 className="text-2xl font-bold text-center">로그인</h2>
         </CardHeader>
         <CardContent className="space-y-4">
+          {error && (
+            <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">
+              {error}
+            </div>
+          )}
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium">
-              이메일
+            <label htmlFor="id" className="text-sm font-medium">
+              아이디
             </label>
             <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              id="id"
+              type="text"
+              placeholder="아이디를 입력하세요"
+              value={formData.id}
+              onChange={(e) => setFormData({ ...formData, id: e.target.value })}
               required
             />
           </div>
@@ -60,7 +77,7 @@ export const LoginForm = () => {
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder="비밀번호를 입력하세요"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               required
@@ -79,4 +96,4 @@ export const LoginForm = () => {
       </Card>
     </form>
   );
-};
+}

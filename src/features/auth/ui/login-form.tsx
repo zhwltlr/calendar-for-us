@@ -49,7 +49,7 @@ export const LoginForm = () => {
     <form onSubmit={handleSubmit} className="w-full max-w-md px-4">
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
-          <h2 className="text-2xl font-bold text-center">로그인</h2>
+          <h2 className="text-2xl font-bold text-center">LOGIN</h2>
         </CardHeader>
         <CardContent className="space-y-4">
           {error && (

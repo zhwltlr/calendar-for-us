@@ -11,7 +11,7 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-start py-24 justify-center">
       <LoginForm />
     </div>
   );

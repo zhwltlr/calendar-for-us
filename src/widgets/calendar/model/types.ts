@@ -3,7 +3,7 @@ export interface CalendarEvent {
   title: string;
   start: Date;
   end: Date;
-  isHoliday: boolean; // optional 제거
+  isHoliday: boolean; 
   description?: string;
 }
 
@@ -11,9 +11,13 @@ export interface HolidayCache {
   [key: string]: CalendarEvent[];
 }
 
-export interface Schedule extends Omit<CalendarEvent, "start" | "end"> {
+export interface Schedule {
   id: string;
+  title: string;
   startDate: Date;
   endDate: Date;
   description?: string;
+  userId?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

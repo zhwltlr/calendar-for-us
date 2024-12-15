@@ -11,9 +11,8 @@
   }
   
   .rbc-event {
-    padding: 2px 5px;
     font-size: 14px;
-    min-height: 20px;
+    min-height: 8px;
   }
   
   .rbc-row-segment {
@@ -65,9 +64,7 @@
     }
     
     .rbc-event {
-      padding: 1px 2px;
-      font-size: 10px;
-      min-height: 15px;
+      min-height: 8px;
     }
     
     .rbc-row-segment {

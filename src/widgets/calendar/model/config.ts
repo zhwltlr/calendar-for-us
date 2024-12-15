@@ -45,6 +45,8 @@ export const eventStyleGetter = (event: CalendarEvent) => {
         border: "0px",
         display: "block",
         padding: "2px 5px",
+        marginBottom: "2px",
+        fontSize : "12px",
       }
     };
   }
@@ -64,19 +66,20 @@ export const eventStyleGetter = (event: CalendarEvent) => {
     return {
       style: {
         backgroundColor: scheduleTypeColors[event.title],
-        width: '10px',
-        height: '10px',
+        width: '8px',
+        height: '8px',
         borderRadius: '50%',
         position: 'relative',
         top: 0,
         left: '4px',
         margin: '2px',
-        padding: '0 10px',
+        padding: '0',
         border: 'none',
         color: 'transparent',
         fontSize: 0,
         lineHeight: 0,
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        transform: 'translate(0, -18px)',
       } as CSSProperties
     };
   }
@@ -91,6 +94,8 @@ export const eventStyleGetter = (event: CalendarEvent) => {
       border: "0px",
       display: "block",
       padding: "2px 5px",
+      marginBottom: "2px",
+      fontSize : "12px",
     } as CSSProperties
   };
 };

@@ -212,6 +212,7 @@ const MainCalendar: React.FC = () => {
         startAccessor="start"
         endAccessor="end"
         style={{ height: "100%" }}
+        popup={true}
         eventPropGetter={eventStyleGetter}
         messages={calendarMessages}
         culture="ko"

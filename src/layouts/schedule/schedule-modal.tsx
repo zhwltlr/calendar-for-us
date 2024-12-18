@@ -1,15 +1,15 @@
 "use client";
 
-import { Button } from "@/shared/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/shared/ui/dialog";
-import { Input } from "@/shared/ui/input";
-import { Textarea } from "@/shared/ui/textarea";
-import { CalendarEvent } from "@/widgets/calendar/model/types";
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { CalendarEvent } from "@/types/calendarTypes";
 import { useEffect, useState } from "react";
 
 interface ScheduleModalProps {

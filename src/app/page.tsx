@@ -1,5 +1,5 @@
-import { LoginForm } from '@/features/auth/ui/login-form';
-import { authOptions } from '@/shared/lib/auth/auth';
+import { LoginForm } from '@/layouts/login/login-form';
+import { authOptions } from '@/utils/auth/auth';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 

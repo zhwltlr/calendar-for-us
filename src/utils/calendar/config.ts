@@ -2,7 +2,7 @@ import { format, getDay, startOfWeek } from "date-fns";
 import { ko } from "date-fns/locale";
 import { CSSProperties } from "react";
 import { dateFnsLocalizer } from "react-big-calendar";
-import { CalendarEvent } from "./types";
+import { CalendarEvent } from "../../types/calendarTypes";
 
 export const locales = {
   ko: ko,

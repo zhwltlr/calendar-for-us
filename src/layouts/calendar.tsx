@@ -1,22 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { fetchHolidayData } from "@/features/holiday-display/model/service";
-import { ScheduleModal } from "@/features/schedule-form/ui/schedule-modal";
-import { ScheduleTypeModal } from "@/features/schedule-type-form/ui/schedule-type-modal";
-import { Button } from "@/shared/ui/button";
-import { Card } from "@/shared/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ScheduleModal } from "@/layouts/schedule/schedule-modal";
+import { ScheduleTypeModal } from "@/layouts/schedule/schedule-type-modal";
+import { fetchHolidayData } from "@/utils/schedule/holiday";
 import axios from "axios";
 import { Loader2, MoreHorizontal } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Calendar } from "react-big-calendar";
+import "../style/calendar.css";
+import { CalendarEvent, HolidayCache, Schedule } from "../types/calendarTypes";
 import {
   calendarLocalizer,
   calendarMessages,
   eventStyleGetter,
-} from "../model/config";
-import { CalendarEvent, HolidayCache, Schedule } from "../model/types";
-import '../styles/calendar.css';
+} from "../utils/calendar/config";
 
 const CALENDAR_HEIGHT = "calc(100vh - 200px)";
 
@@ -29,10 +29,13 @@ const MainCalendar: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [isMobile, setIsMobile] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | undefined>();
-  const [modalMode, setModalMode] = useState<'create' | 'view' | 'edit'>('create');
+  const [selectedEvent, setSelectedEvent] = useState<
+    CalendarEvent | undefined
+  >();
+  const [modalMode, setModalMode] = useState<"create" | "view" | "edit">(
+    "create"
+  );
   const [isScheduleTypeModalOpen, setIsScheduleTypeModalOpen] = useState(false);
-  
 
   const holidayCache = useRef<HolidayCache>({});
   const fetchingMonths = useRef<Set<string>>(new Set());
@@ -43,8 +46,8 @@ const MainCalendar: React.FC = () => {
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   const getCacheKey = useCallback((date: Date) => {
@@ -59,7 +62,7 @@ const MainCalendar: React.FC = () => {
       const fetchedSchedules = response.data.map((schedule: Schedule) => ({
         ...schedule,
         startDate: new Date(schedule.startDate),
-        endDate: new Date(schedule.endDate)
+        endDate: new Date(schedule.endDate),
       }));
       setSchedules(fetchedSchedules);
     } catch (error) {
@@ -74,7 +77,7 @@ const MainCalendar: React.FC = () => {
   const handleSelectSlot = useCallback(({ start }: { start: Date }) => {
     setSelectedDate(start);
     setSelectedEvent(undefined);
-    setModalMode('create');
+    setModalMode("create");
     setIsModalOpen(true);
   }, []);
 
@@ -82,7 +85,7 @@ const MainCalendar: React.FC = () => {
     if (!event.isHoliday) {
       setSelectedEvent(event);
       setSelectedDate(event.start);
-      setModalMode('view');
+      setModalMode("view");
       setIsModalOpen(true);
     }
   }, []);
@@ -111,7 +114,7 @@ const MainCalendar: React.FC = () => {
       await axios.put(`/api/schedules/${id}`, {
         title: data.title,
         description: data.description,
-        startDate: data.start.toISOString(), 
+        startDate: data.start.toISOString(),
         endDate: data.end.toISOString(),
       });
       fetchSchedules();
@@ -172,7 +175,7 @@ const MainCalendar: React.FC = () => {
 
       start.setHours(0, 0, 0, 0);
       end.setHours(23, 59, 59, 999);
-      
+
       return {
         id: schedule.id,
         title: schedule.title,
@@ -183,22 +186,22 @@ const MainCalendar: React.FC = () => {
       };
     }),
   ];
-  
 
   return (
     <Card className="p-4 w-full">
-      <div className="flex justify-end mb-4">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => setIsScheduleTypeModalOpen(true)}
-      >
-        <MoreHorizontal className="h-4 w-4 mr-2" />
-        More
-      </Button>
-    </div>
-      <div 
-        style={{ height: isMobile ? 'calc(100vh - 250px)' : CALENDAR_HEIGHT }} 
+      <div className="flex mb-4 justify-end flex-row-reverse">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsScheduleTypeModalOpen(true)}
+        >
+          <MoreHorizontal className="h-4 w-4 mr-2" />
+          More
+        </Button>
+      </div>
+
+      <div
+        style={{ height: isMobile ? "calc(100vh - 250px)" : CALENDAR_HEIGHT }}
         className="w-full relative"
       >
         {isLoading && (
@@ -206,46 +209,45 @@ const MainCalendar: React.FC = () => {
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
         )}
-      <Calendar
-        localizer={calendarLocalizer}
-        events={allEvents}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: "100%" }}
-        popup={true}
-        eventPropGetter={eventStyleGetter}
-        messages={calendarMessages}
-        culture="ko"
-        defaultView="month"
-        views={["month"]}
-        tooltipAccessor={(event) => event.title}
-        date={currentDate}
-        onNavigate={setCurrentDate}
-        onSelectSlot={handleSelectSlot}
-        onSelectEvent={handleSelectEvent}
-        selectable
-        dayPropGetter={(date) => ({
-          className: 'rbc-day-slot',
-          style: {
-            position: 'relative'
-          }
-        })}
-        components={{
-          event: (props) => (
-            <div
-              style={{
-                position: 'relative',
-                width: '100%',
-                height: '100%'
-              }}
-            >
-              {props.event.title}
-            </div>
-          )
-        }}
-      />
+        <Calendar
+          localizer={calendarLocalizer}
+          events={allEvents}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: "100%" }}
+          popup={true}
+          eventPropGetter={eventStyleGetter}
+          messages={calendarMessages}
+          culture="ko"
+          defaultView="month"
+          views={["month"]}
+          tooltipAccessor={(event) => event.title}
+          date={currentDate}
+          onNavigate={setCurrentDate}
+          onSelectSlot={handleSelectSlot}
+          onSelectEvent={handleSelectEvent}
+          selectable
+          dayPropGetter={(date) => ({
+            className: "rbc-day-slot",
+            style: {
+              position: "relative",
+            },
+          })}
+          components={{
+            event: (props) => (
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                {props.event.title}
+              </div>
+            ),
+          }}
+        />
       </div>
-
       <ScheduleModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -255,12 +257,11 @@ const MainCalendar: React.FC = () => {
         onUpdate={handleScheduleUpdate}
         onDelete={handleScheduleDelete}
       />
-
-    <ScheduleTypeModal
-      isOpen={isScheduleTypeModalOpen}
-      onClose={() => setIsScheduleTypeModalOpen(false)}
-      currentMonth={currentDate} 
-    />
+      <ScheduleTypeModal
+        isOpen={isScheduleTypeModalOpen}
+        onClose={() => setIsScheduleTypeModalOpen(false)}
+        currentMonth={currentDate}
+      />
     </Card>
   );
 };

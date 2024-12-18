@@ -1,5 +1,5 @@
 import prisma from "@/shared/db/clinet";
-import { authOptions } from "@/shared/lib/auth/auth";
+import { authOptions } from "@/utils/auth/auth";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 

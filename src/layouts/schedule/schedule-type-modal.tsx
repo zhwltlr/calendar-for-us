@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { createScheduleType } from "../model/service";
-import { LeaveType, ScheduleType, WorkType } from "../model/types";
+import { LeaveType, ScheduleType, WorkType } from "../../types/scheduleTypes";
+import { createScheduleType } from "../../utils/schedule/schedule";
 
 interface ScheduleTypeModalProps {
   isOpen: boolean;

@@ -1,6 +1,6 @@
-import { CalendarEvent } from "@/widgets/calendar/model/types";
+import { CalendarEvent } from "@/types/calendarTypes";
 import axios from "axios";
-import { HolidayItem, HolidayResponse } from "./types";
+import { HolidayItem, HolidayResponse } from "../../types/holidayTypes";
 
 export const fetchHolidayData = async (
   year: number,

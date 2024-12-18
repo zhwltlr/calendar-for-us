@@ -1,8 +1,8 @@
 'use client'
 
-import { Button } from '@/shared/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/shared/ui/card';
-import { Input } from '@/shared/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';

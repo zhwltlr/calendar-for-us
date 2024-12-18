@@ -1,5 +1,5 @@
 import { signIn } from 'next-auth/react';
-import { LoginData } from './type';
+import { LoginData } from '../../types/authType';
 
 export const loginUser = async (data: LoginData) => {
   const result = await signIn('credentials', {

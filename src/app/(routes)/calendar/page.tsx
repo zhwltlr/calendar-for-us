@@ -1,5 +1,5 @@
-import { authOptions } from '@/shared/lib/auth/auth';
-import MainCalendar from "@/widgets/calendar/ui/calendar";
+import MainCalendar from "@/layouts/calendar";
+import { authOptions } from '@/utils/auth/auth';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 

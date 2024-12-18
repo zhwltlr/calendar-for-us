@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LeaveType, WorkType } from "./types";
+import { LeaveType, WorkType } from "../../types/scheduleTypes";
 
 export const createScheduleType = async (
     type: WorkType | LeaveType,
